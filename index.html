@@ -41,7 +41,15 @@
 
     <script>
         // Ініціалізація Telegram WebApp
-        Telegram.WebApp.ready();
+        try {
+            Telegram.WebApp.ready();
+            console.log("Telegram WebApp initialized successfully");
+        } catch (error) {
+            console.error("Error initializing Web App:", error);
+        }
+
+        // Debug information about the user
+        console.log("User info:", Telegram.WebApp.initDataUnsafe);
 
         let score = 0;
 
