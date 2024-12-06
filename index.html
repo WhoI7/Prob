@@ -45,7 +45,7 @@
 
     <script>
         // Ініціалізація Telegram Web App
-        
+        Telegram.WebApp.init();
 
         let score = 0;
 
@@ -56,7 +56,8 @@
         });
 
         // Обробка натискання на кнопку "Send to Telegram"
-       
+        document.getElementById('sendButton').addEventListener('click', function() {
+            Telegram.WebApp.sendData(score); // Надсилаємо рахунок в Telegram
         });
     </script>
 </body>
