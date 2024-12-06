@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Clicker Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #incrementButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #incrementButton:hover {
+            background-color: #45a049;
+        }
+        #sendButton {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #sendButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Clicker Game</h1>
+    <p id="score">Score: 0</p>
+    <button id="incrementButton">+1</button>
+    <button id="sendButton">Send to Telegram</button>
+
+    <script>
+        // Ініціалізація Telegram Web App
+        Telegram.WebApp.init();
+
+        let score = 0;
+
+        // Обробка натискання на кнопку +1
+        document.getElementById('incrementButton').addEventListener('click', function() {
+            score++;
+            document.getElementById('score').textContent = 'Score: ' + score;
+        });
+
+        // Обробка натискання на кнопку "Send to Telegram"
+        document.getElementById('sendButton').addEventListener('click', function() {
+            Telegram.WebApp.sendData(score); // Надсилаємо рахунок в Telegram
+        });
+    </script>
+</body>
+</html>
