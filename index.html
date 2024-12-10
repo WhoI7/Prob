@@ -3,65 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Clicker Game</title>
+    <title>Clicker Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
     <style>
+        /* Додам базові стилі для гри, якщо у style.css немає */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #game-container {
             text-align: center;
-            margin-top: 50px;
         }
 
-        .button {
-            padding: 10px 20px;
-            font-size: 18px;
+        #timer, #score {
+            font-size: 1.5rem;
             margin: 10px;
-            border: none;
-            border-radius: 5px;
+        }
+
+        #objects-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .clickable-object {
+            width: 50px;
+            height: 50px;
             background-color: #007bff;
-            color: white;
+            border: none;
+            border-radius: 50%;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .button:hover {
-            background-color: #0056b3;
-        }
-
-        #score {
-            font-size: 24px;
-            margin-top: 20px;
+        .clickable-object:hover {
+            transform: scale(1.2);
         }
     </style>
 </head>
 <body>
-    <h1>Telegram Clicker Game</h1>
-    <button id="add" class="button">+1</button>
-    <button id="submit" class="button">Submit Score</button>
-    <div id="score">Score: 0</div>
+    <div id="game-container">
+        <div id="timer">Час: 30</div>
+        <div id="score">Очки: 0</div>
+        <div id="objects-container">
+            <button class="clickable-object"></button>
+            <button class="clickable-object"></button>
+            <button class="clickable-object"></button>
+            <button class="clickable-object"></button>
+            <button class="clickable-object"></button>
+        </div>
+    </div>
 
     <script>
-        // Ініціалізація Telegram WebApp
-        try {
-            Telegram.WebApp.ready();
-            console.log("Telegram WebApp initialized successfully");
-        } catch (error) {
-            console.error("Error initializing Web App:", error);
+        // Ініціалізація WebApp для Telegram
+        Telegram.WebApp.expand();
+        console.log("Telegram WebApp initialized successfully");
+
+        // Оновлення вигляду та функціональності інтерфейсу WebApp
+        Telegram.WebApp.ready();
+        Telegram.WebApp.setBackgroundColor("#ffffff"); // Змінюємо фон на білий
+
+        // Функціональність гри
+        let score = 0;
+        let timer = 30;
+
+        const scoreElement = document.getElementById("score");
+        const timerElement = document.getElementById("timer");
+        const clickableObjects = document.querySelectorAll(".clickable-object");
+
+        // Оновлення рахунку
+        function updateScore() {
+            score++;
+            scoreElement.textContent = `Очки: ${score}`;
         }
 
-        // Debug information about the user
-        console.log("User info:", Telegram.WebApp.initDataUnsafe);
+        // Таймер
+        const timerInterval = setInterval(() => {
+            timer--;
+            timerElement.textContent = `Час: ${timer}`;
+            if (timer <= 0) {
+                clearInterval(timerInterval);
+                alert(`Гру завершено! Ваш рахунок: ${score}`);
 
-        let score = 0;
+                // Відправлення результату в Telegram бота
+                Telegram.WebApp.sendData(`Рахунок: ${score}`);
+            }
+        }, 1000);
 
-        // Додаємо обробник для кнопки "+1"
-        document.getElementById("add").addEventListener("click", function () {
-            score++;
-            document.getElementById("score").textContent = "Score: " + score;
-        });
-
-        // Обробка відправки результату через Telegram Web App
-        document.getElementById("submit").addEventListener("click", function () {
-            Telegram.WebApp.sendData(score.toString()); // Відправляємо рахунок у вигляді тексту
+        // Додавання подій до кнопок
+        clickableObjects.forEach(button => {
+            button.addEventListener("click", updateScore);
         });
     </script>
 </body>
