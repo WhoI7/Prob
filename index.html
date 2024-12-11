@@ -3,107 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clicker Game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <title>Telegram Game</title>
+    <script>
+        let timer = 10;
+        let score = 0;
+
+        function startGame() {
+            const timerElement = document.getElementById('timer');
+            const scoreElement = document.getElementById('score');
+            const clickButton = document.getElementById('click-button');
+
+            const countdown = setInterval(() => {
+                timer--;
+                timerElement.innerText = `Time: ${timer}`;
+                if (timer <= 0) {
+                    clearInterval(countdown);
+                    clickButton.disabled = true;
+
+                    // Передаємо результат в Telegram Gaming Platform
+                    if (window.TelegramGameProxy) {
+                        TelegramGameProxy.postEvent('score', score);
+                    }
+                }
+            }, 1000);
+
+            clickButton.addEventListener('click', () => {
+                score++;
+                scoreElement.innerText = `Score: ${score}`;
+            });
+        }
+    </script>
     <style>
-        /* Додам базові стилі для гри, якщо у style.css немає */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 20px;
         }
 
         #game-container {
-            text-align: center;
+            margin: 0 auto;
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        #timer, #score {
-            font-size: 1.5rem;
-            margin: 10px;
-        }
-
-        #objects-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .clickable-object {
-            width: 50px;
-            height: 50px;
-            background-color: #007bff;
-            border: none;
-            border-radius: 50%;
+        #click-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
             cursor: pointer;
-            transition: transform 0.2s;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
 
-        .clickable-object:hover {
-            transform: scale(1.2);
+        #click-button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
         }
     </style>
 </head>
-<body>
+<body onload="startGame()">
     <div id="game-container">
-        <div id="timer">Час: 30</div>
-        <div id="score">Очки: 0</div>
-        <div id="objects-container">
-            <button class="clickable-object"></button>
-            <button class="clickable-object"></button>
-            <button class="clickable-object"></button>
-            <button class="clickable-object"></button>
-            <button class="clickable-object"></button>
-        </div>
+        <h1>Simple Telegram Game</h1>
+        <p id="timer">Time: 10</p>
+        <p id="score">Score: 0</p>
+        <button id="click-button">Click Me!</button>
     </div>
-
-    <script>
-        // Ініціалізація WebApp для Telegram
-        Telegram.WebApp.expand();
-        console.log("Telegram WebApp initialized successfully");
-
-        // Оновлення вигляду та функціональності інтерфейсу WebApp
-        Telegram.WebApp.ready();
-        Telegram.WebApp.setBackgroundColor("#ffffff"); // Змінюємо фон на білий
-
-        // Функціональність гри
-        let score = 0;
-        let timer = 30;
-
-        const scoreElement = document.getElementById("score");
-        const timerElement = document.getElementById("timer");
-        const clickableObjects = document.querySelectorAll(".clickable-object");
-
-        // Оновлення рахунку
-        function updateScore() {
-            score++;
-            scoreElement.textContent = `Очки: ${score}`;
-        }
-
-        // Таймер
-        const timerInterval = setInterval(() => {
-            timer--;
-            timerElement.textContent = `Час: ${timer}`;
-            if (timer <= 0) {
-                clearInterval(timerInterval);
-                alert(`Гру завершено! Ваш рахунок: ${score}`);
-
-                // Відправлення результату в Telegram бота
-                Telegram.WebApp.sendData(`Рахунок: ${score}`);
-            }
-        }, 1000);
-
-        // Додавання подій до кнопок
-        clickableObjects.forEach(button => {
-            button.addEventListener("click", updateScore);
-        });
-    </script>
 </body>
 </html>
